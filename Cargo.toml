@@ -2,6 +2,7 @@
 # Must be explicit: virtual workspaces default to resolver 1, ignoring the members' edition
 resolver = "3"
 members = ["alvr/*"]
+exclude = ["alvr/resources"]
 
 [workspace.package]
 version = "21.0.0-dev14"

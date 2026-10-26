@@ -228,6 +228,24 @@ pub fn build_streamer(
             build_layout.openvr_driver_manifest(),
         )
         .unwrap();
+
+        // copy render models, icons and input profiles shipped with the driver
+        let resources_src = afs::workspace_dir().join("alvr/resources");
+        let resources_dst = build_layout.resources_dir();
+        sh.create_dir(&resources_dst).unwrap();
+        for entry in walkdir::WalkDir::new(&resources_src) {
+            let entry = entry.unwrap();
+            let relative_path = entry.path().strip_prefix(&resources_src).unwrap();
+            if relative_path.as_os_str().is_empty() {
+                continue;
+            }
+            let destination_path = resources_dst.join(relative_path);
+            if entry.file_type().is_dir() {
+                sh.create_dir(&destination_path).unwrap();
+            } else {
+                sh.copy_file(entry.path(), &destination_path).unwrap();
+            }
+        }
     }
 }
 
