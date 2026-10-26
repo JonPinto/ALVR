@@ -278,9 +278,9 @@ for entry in walkdir::WalkDir::new(&resources_src) {
 }
 ```
 
-Two gotchas that will bite you first **[high]** (both hit during this example):
-1. **Workspace membership.** `Cargo.toml` has `members = ["alvr/*"]`, so a new `alvr/resources/` directory makes *every* cargo invocation fail with "failed to read alvr/resources/Cargo.toml". Fix: add `exclude = ["alvr/resources"]` to the `[workspace]` table.
-2. **`sh.copy_file` does not create parent directories.** Walkdir yields directories before their contents, so create every directory entry and only then copy files (as above).
+Two gotchas **[high]**:
+1. **Workspace membership** *(hit during this example)*: `Cargo.toml` has `members = ["alvr/*"]`, so a new `alvr/resources/` directory makes *every* cargo invocation fail with "failed to read alvr/resources/Cargo.toml". Fix: add `exclude = ["alvr/resources"]` to the `[workspace]` table.
+2. **Parent directories for copies** *(precaution, [medium])*: xshell's `sh.copy_file` is a thin `fs::copy` wrapper — don't rely on it creating missing parents. Walkdir yields directories before their contents, so create every directory entry and only then copy files (as above).
 
 This mirrors the approach of ALVR's historical model support (commit `73b0b814` added a near-identical block to `xtask`), which was later removed together with the model files (`c1d2a943`) **[high]**.
 
