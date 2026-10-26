@@ -135,6 +135,7 @@ fn serial_number(device_id: u64) -> String {
                 ControllersEmulationMode::Quest2Touch => "1WMHH000X00000_Controller",
                 ControllersEmulationMode::Quest3Plus => "2G0YXX0X0000XX_Controller", // 2G0YY Left 2G0YZ Right
                 ControllersEmulationMode::QuestPro => "230YXXXXXXXXXX_Controller", // 230YT left, 230YV right
+                ControllersEmulationMode::PicoNeo2 => "WMHD316Q512X12_Controller",
                 ControllersEmulationMode::RiftSTouch
                 | ControllersEmulationMode::Pico4
                 | ControllersEmulationMode::PSVR2Sense
@@ -242,6 +243,45 @@ pub extern "C" fn set_device_openvr_props(instance_ptr: *mut c_void, device_id: 
         set_prop(
             NamedIconPathDeviceStandbyAlertString,
             format!("{base_path}_standby_alert.gif").as_str(),
+        );
+    };
+
+    let set_neo2_icons = |base_path: &str| {
+        set_prop(
+            NamedIconPathDeviceOffString,
+            format!("{base_path}_off.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceSearchingString,
+            format!("{base_path}_searching.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceSearchingAlertString,
+            format!("{base_path}_searching_alert.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceReadyString,
+            format!("{base_path}_ready.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceReadyAlertString,
+            format!("{base_path}_ready_alert.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceAlertLowString,
+            format!("{base_path}_ready_low.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceStandbyString,
+            format!("{base_path}_standby.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceStandbyAlertString,
+            format!("{base_path}_standby.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceNotReadyString,
+            format!("{base_path}_error.png").as_str(),
         );
     };
 
@@ -467,6 +507,34 @@ pub extern "C" fn set_device_openvr_props(instance_ptr: *mut c_void, device_id: 
                     set_prop(
                         InputProfilePathString,
                         "{vrlink}/input/pico_controller_profile.json",
+                    );
+                }
+                ControllersEmulationMode::PicoNeo2 => {
+                    set_prop(TrackingSystemNameString, "pico");
+                    set_prop(ManufacturerNameString, "Pico");
+                    if left_hand {
+                        set_prop(ModelNumberString, "Pico Neo2 Controller left");
+                        set_prop(
+                            RenderModelNameString,
+                            "{alvr_server}/rendermodels/pico_neo2_leftcontroller",
+                        );
+                        set_neo2_icons("{alvr_server}/icons/neo2/controller");
+                    } else if right_hand {
+                        set_prop(ModelNumberString, "Pico Neo2 Controller right");
+                        set_prop(
+                            RenderModelNameString,
+                            "{alvr_server}/rendermodels/pico_neo2_rightcontroller",
+                        );
+                        set_neo2_icons("{alvr_server}/icons/neo2/controller");
+                    }
+                    set_prop(ControllerTypeString, "pico_controller");
+                    set_prop(
+                        InputProfilePathString,
+                        "{alvr_server}/input/pico_controller_profile.json",
+                    );
+                    set_prop(
+                        RegisteredDeviceTypeString,
+                        format!("pico/{device_serial}").as_str(),
                     );
                 }
                 ControllersEmulationMode::PSVR2Sense => {

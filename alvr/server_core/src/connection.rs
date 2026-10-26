@@ -115,6 +115,7 @@ pub fn compute_restart_settings_hash(
             ControllersEmulationMode::ViveWand => 40,
             ControllersEmulationMode::ViveTracker => 41,
             ControllersEmulationMode::PSVR2Sense => 60,
+            ControllersEmulationMode::PicoNeo2 => 70,
             ControllersEmulationMode::Custom { .. } => 500,
         };
         use_separate_hand_trackers = config
