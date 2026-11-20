@@ -1,0 +1,19 @@
+PICO Neo 2 SteamVR resources
+============================
+
+The files in this directory (render models, textures, status icons, input
+profiles and binding descriptors) originate from the PICO Link / PICO Streaming
+Assistant SteamVR driver, which is proprietary software distributed by PICO
+(ByteDance).
+
+They are included for interoperability only: ALVR emulates a PICO Neo 2 headset
+and controllers, and SteamVR can only render them if these resources are
+available to the driver. The assets are unmodified except for the `{pico}` ->
+`{alvr_server}` path rewrites in `input/pico_neo2_controller_profile.json` and
+`input/pico_neo2_hmd_profile.json`, the vendor prefix in those two files, and
+the removal of two textures per controller that no material references.
+
+ALVR's MIT license does not apply to these assets. No license, express or
+implied, is granted to them, and all rights remain with PICO.
+
+If you are a rights holder and want these files removed, please open an issue.

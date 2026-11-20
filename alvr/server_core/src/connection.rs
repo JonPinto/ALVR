@@ -107,6 +107,7 @@ pub fn compute_restart_settings_hash(
             ControllersEmulationMode::Quest3Plus => 3,
             ControllersEmulationMode::QuestPro => 4,
             ControllersEmulationMode::Pico4 => 10,
+            ControllersEmulationMode::PicoNeo2 => 11,
             ControllersEmulationMode::ValveIndex => 20,
             ControllersEmulationMode::ViveWand => 40,
             ControllersEmulationMode::ViveTracker => 41,

@@ -3,7 +3,7 @@ use std::{
     env,
     fmt::{self, Display, Formatter},
     fs,
-    path::PathBuf,
+    path::{Path, PathBuf},
     vec,
 };
 use xshell::{Shell, cmd};
@@ -268,7 +268,33 @@ pub fn build_streamer(
             build_layout.openvr_driver_manifest(),
         )
         .unwrap();
+
+        // copy resources used by emulation modes (render models, input profiles, icons)
+        copy_dir_all(
+            &afs::crate_dir("xtask").join("resources/pico_neo2"),
+            &build_layout.resources_dir(),
+        )
+        .unwrap();
     }
+}
+
+/// Recursively copies a directory tree.
+fn copy_dir_all(src: &Path, dst: &Path) -> std::io::Result<()> {
+    fs::create_dir_all(dst)?;
+
+    for entry in fs::read_dir(src)? {
+        let entry = entry?;
+        let src_path = entry.path();
+        let dst_path = dst.join(entry.file_name());
+
+        if entry.file_type()?.is_dir() {
+            copy_dir_all(&src_path, &dst_path)?;
+        } else {
+            fs::write(&dst_path, fs::read(&src_path)?)?;
+        }
+    }
+
+    Ok(())
 }
 
 pub fn build_launcher(profile: Profile, reproducible: bool) {
@@ -423,4 +449,66 @@ pub fn build_android_client(profile: Profile) {
         build_dir.join(format!("{ARTIFACT_NAME}.apk")),
     )
     .unwrap();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_root(name: &str) -> PathBuf {
+        let root = std::env::temp_dir().join(format!("alvr_xtask_{name}"));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).unwrap();
+        root
+    }
+
+    #[test]
+    fn copies_directories_recursively() {
+        let root = test_root("copy_dir_all");
+        let src = root.join("src");
+        fs::create_dir_all(src.join("nested")).unwrap();
+        fs::write(src.join("a.txt"), b"a").unwrap();
+        fs::write(src.join("nested/b.txt"), b"b").unwrap();
+
+        copy_dir_all(&src, &root.join("dst")).unwrap();
+
+        assert_eq!(fs::read(root.join("dst/a.txt")).unwrap(), b"a");
+        assert_eq!(fs::read(root.join("dst/nested/b.txt")).unwrap(), b"b");
+
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn copies_vendored_pico_neo2_assets() {
+        let src = afs::crate_dir("xtask").join("resources/pico_neo2");
+        let root = test_root("copy_dir_all_assets");
+        let dst = root.join("resources");
+
+        copy_dir_all(&src, &dst).unwrap();
+
+        assert!(
+            dst.join("rendermodels/pico_neo2_leftcontroller/pico_neo2_leftcontroller.json")
+                .is_file()
+        );
+        assert!(
+            dst.join("rendermodels/pico_neo2_rightcontroller/pico_neo2_rightcontroller.json")
+                .is_file()
+        );
+        assert!(
+            dst.join("input/pico_neo2_controller_profile.json")
+                .is_file()
+        );
+        assert!(dst.join("icons_neo2/controller_off.png").is_file());
+
+        let count_files = |path: &Path| {
+            walkdir::WalkDir::new(path)
+                .into_iter()
+                .filter_map(Result::ok)
+                .filter(|entry| entry.file_type().is_file())
+                .count()
+        };
+        assert_eq!(count_files(&src), count_files(&dst));
+
+        fs::remove_dir_all(&root).unwrap();
+    }
 }

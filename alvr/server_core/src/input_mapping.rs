@@ -24,6 +24,11 @@ pub fn registered_button_set(
             .unwrap()
             .button_set
             .clone(),
+        ControllersEmulationMode::PicoNeo2 => CONTROLLER_PROFILE_INFO
+            .get(&PICO_NEO3_CONTROLLER_PROFILE_ID)
+            .unwrap()
+            .button_set
+            .clone(),
         ControllersEmulationMode::PSVR2Sense => CONTROLLER_PROFILE_INFO
             .get(&PSVR2_CONTROLLER_PROFILE_ID)
             .unwrap()

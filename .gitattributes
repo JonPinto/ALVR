@@ -10,3 +10,8 @@ alvr/server_openvr/cpp/shared/** linguist-vendored
 alvr/vulkan_layer/layer/** linguist-vendored
 alvr/vulkan_layer/util/** linguist-vendored
 alvr/vulkan_layer/wsi/** linguist-vendored
+
+# Vendored PICO Neo 2 emulation assets. See NOTICE-PICO.txt next to them.
+# Keep the whole tree binary so the files stay byte-identical to PICO's originals
+# (they are shipped with CRLF line endings) instead of being normalized to LF.
+alvr/xtask/resources/pico_neo2/** -text -eol
