@@ -1,5 +1,20 @@
 # Changelog
 
+## v20.14.1-pico-neo2-alpha.1
+
+First alpha of the PICO Neo 2 fork, based on upstream ALVR **v20.14.1**. It keeps
+the upstream version so the wire-protocol id stays `20`, which is what the legacy
+Pico Neo 2 client uses
+([alvr-pico-legacy](https://github.com/Juspertinry/alvr-pico-legacy)).
+
+* Add PICO Neo 2 headset and controller emulation modes. SteamVR loads the Neo 2
+  controller render models, status icons and `pico_controller` input profile from
+  ALVR's own driver resources (`{alvr_server}/rendermodels/pico_neo2_*`), the same
+  way PICO's driver serves them with `{pico}`. See
+  `alvr/xtask/resources/pico_neo2/NOTICE-PICO.txt` for the asset licensing note.
+* Vendored PICO Neo 2 render models, textures, icons and input profiles, copied
+  into the driver's `resources/` folder by `build-streamer`.
+
 ## v20.11.0
 
 * Add flatpak launcher (by @failboat78 #2207)

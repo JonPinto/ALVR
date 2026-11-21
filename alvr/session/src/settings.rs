@@ -903,6 +903,8 @@ pub enum HeadsetEmulationMode {
     Quest2,
     #[schema(strings(display_name = "Quest Pro"))]
     QuestPro,
+    #[schema(strings(display_name = "Pico Neo 2"))]
+    PicoNeo2,
     Vive,
     Custom {
         serial_number: String,
@@ -1011,6 +1013,8 @@ pub enum ControllersEmulationMode {
     QuestPro,
     #[schema(strings(display_name = "Pico 4"))]
     Pico4,
+    #[schema(strings(display_name = "Pico Neo 2"))]
+    PicoNeo2,
     #[schema(strings(display_name = "Valve Index"))]
     ValveIndex,
     #[schema(strings(display_name = "Vive Wand"))]

@@ -123,6 +123,7 @@ fn serial_number(device_id: u64) -> String {
             HeadsetEmulationMode::RiftS => "1WMGH000XX0000".into(),
             HeadsetEmulationMode::Quest2 => "1WMHH000X00000".into(),
             HeadsetEmulationMode::QuestPro => "230YC0XXXX00XX".into(),
+            HeadsetEmulationMode::PicoNeo2 => "PICONEONEO2".into(),
             HeadsetEmulationMode::Vive => "HTCVive-001".into(),
             HeadsetEmulationMode::Custom { serial_number, .. } => serial_number.clone(),
         }
@@ -132,6 +133,7 @@ fn serial_number(device_id: u64) -> String {
                 ControllersEmulationMode::Quest2Touch => "1WMHH000X00000_Controller",
                 ControllersEmulationMode::Quest3Plus => "2G0YXX0X0000XX_Controller", // 2G0YY Left 2G0YZ Right
                 ControllersEmulationMode::QuestPro => "230YXXXXXXXXXX_Controller", // 230YT left, 230YV right
+                ControllersEmulationMode::PicoNeo2 => "PICONEONEO2_Controller",
                 ControllersEmulationMode::RiftSTouch
                 | ControllersEmulationMode::Pico4
                 | ControllersEmulationMode::ValveIndex
@@ -241,6 +243,44 @@ pub extern "C" fn set_device_openvr_props(instance_ptr: *mut c_void, device_id: 
         );
     };
 
+    // The PICO Neo 2 icon set is PNG-only and has no standby alert variant, so it
+    // cannot use set_icons above.
+    let set_pico_neo2_icons = |base_path: &str| {
+        set_prop(
+            NamedIconPathDeviceOffString,
+            format!("{base_path}_off.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceSearchingString,
+            format!("{base_path}_searching.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceSearchingAlertString,
+            format!("{base_path}_searching_alert.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceReadyString,
+            format!("{base_path}_ready.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceReadyAlertString,
+            format!("{base_path}_ready_alert.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceAlertLowString,
+            format!("{base_path}_ready_low.png").as_str(),
+        );
+        set_prop(
+            NamedIconPathDeviceStandbyString,
+            format!("{base_path}_standby.png").as_str(),
+        );
+        // No dedicated standby alert icon ships with the Neo 2 driver.
+        set_prop(
+            NamedIconPathDeviceStandbyAlertString,
+            format!("{base_path}_standby.png").as_str(),
+        );
+    };
+
     let device_serial = &serial_number(device_id);
     let headset_serial = &serial_number(*HEAD_ID);
 
@@ -279,6 +319,20 @@ pub extern "C" fn set_device_openvr_props(instance_ptr: *mut c_void, device_id: 
                 set_prop(RenderModelNameString, "generic_hmd");
                 set_prop(DriverVersionString, "1.55.0");
                 set_oculus_common_headset_props();
+            }
+            HeadsetEmulationMode::PicoNeo2 => {
+                set_prop(TrackingSystemNameString, "pico");
+                set_prop(ModelNumberString, "Pico Neo 2");
+                set_prop(ManufacturerNameString, "PICO");
+                // SteamVR ships a generic HMD model; the Neo 2 driver uses the same one.
+                set_prop(RenderModelNameString, "generic_hmd");
+                set_prop(RegisteredDeviceTypeString, "pico");
+                set_prop(
+                    InputProfilePathString,
+                    "{alvr_server}/input/pico_neo2_hmd_profile.json",
+                );
+                set_prop(DriverVersionString, "V1.0");
+                set_pico_neo2_icons("{alvr_server}/icons_neo2/headset");
             }
             HeadsetEmulationMode::Vive => {
                 set_prop(TrackingSystemNameString, "Vive Tracker");
@@ -420,6 +474,32 @@ pub extern "C" fn set_device_openvr_props(instance_ptr: *mut c_void, device_id: 
                         InputProfilePathString,
                         "{vrlink}/input/pico_controller_profile.json",
                     );
+                }
+                ControllersEmulationMode::PicoNeo2 => {
+                    set_prop(TrackingSystemNameString, "pico");
+                    set_prop(ManufacturerNameString, "PICO");
+                    set_prop(TrackingFirmwareVersionString, "V1.0");
+                    if left_hand {
+                        set_prop(ModelNumberString, "Pico Neo2 Controller left");
+                        set_prop(
+                            RenderModelNameString,
+                            "{alvr_server}/rendermodels/pico_neo2_leftcontroller",
+                        );
+                    } else if right_hand {
+                        set_prop(ModelNumberString, "Pico Neo2 Controller right");
+                        set_prop(
+                            RenderModelNameString,
+                            "{alvr_server}/rendermodels/pico_neo2_rightcontroller",
+                        );
+                    }
+                    // Same physical button layout as the Neo 2, so SteamVR reuses the
+                    // pico_controller bindings and Pico's oculus_touch compatibility fallback.
+                    set_prop(ControllerTypeString, "pico_controller");
+                    set_prop(
+                        InputProfilePathString,
+                        "{alvr_server}/input/pico_neo2_controller_profile.json",
+                    );
+                    set_pico_neo2_icons("{alvr_server}/icons_neo2/controller");
                 }
                 ControllersEmulationMode::ValveIndex => {
                     set_prop(TrackingSystemNameString, "indexcontroller");

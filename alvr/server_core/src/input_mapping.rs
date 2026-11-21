@@ -23,6 +23,12 @@ pub fn registered_button_set(
             .unwrap()
             .button_set
             .clone(),
+        // Same physical button layout as the Neo 3, so reuse its interaction profile.
+        ControllersEmulationMode::PicoNeo2 => CONTROLLER_PROFILE_INFO
+            .get(&PICO_NEO3_CONTROLLER_PROFILE_ID)
+            .unwrap()
+            .button_set
+            .clone(),
         ControllersEmulationMode::ValveIndex => CONTROLLER_PROFILE_INFO
             .get(&INDEX_CONTROLLER_PROFILE_ID)
             .unwrap()
