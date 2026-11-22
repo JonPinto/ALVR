@@ -12,6 +12,8 @@ Pico client, with a PICO Neo 2 emulation mode — see [About this fork](#about-t
 
 ## About this fork
 
+Disclaimer: This fork, although simple, relied heavily on llm agentic coding. I'm stating it here for clarity. Regardless, the changes that this fork implement, are quite minor.
+
 This fork adds a **PICO Neo 2 headset and controller emulation mode** to ALVR.
 
 When the mode is selected, SteamVR identifies the connected devices as a PICO Neo 2 and loads the
@@ -57,80 +59,15 @@ The controllers should then show up as *"Pico Neo2 Controller left"* / *"Pico Ne
 
 ### Status
 
-First alpha. The code builds, type-checks and is format-clean, and the vendored resource tree is
-validated. The one thing that has **not** been verified against a live SteamVR is the
-`{alvr_server}` resource wildcard resolving to the driver's own `resources/` folder (it is
-documented OpenVR behaviour and mirrors exactly how PICO uses `{pico}`). If the controller models do
-not appear, see [Known limitations](#known-limitations).
+First alpha. Needs further testing and making sure basic functionality remains unharmed.
 
 ### Known limitations
 
-- The `{alvr_server}` → `<driver>/resources` wildcard mapping is unverified on a live SteamVR. If the
-  Neo 2 models do not load, the fallback is a one-line change in `alvr/server_openvr/src/props.rs`:
-  replace the two `RenderModelNameString` values
-  (`{alvr_server}/rendermodels/pico_neo2_{left,right}controller`) with the bare model names
-  `pico_neo2_leftcontroller` / `pico_neo2_rightcontroller`. Nothing else depends on the token form.
-- Only the PICO Neo 2 controller models are shipped. The HMD uses SteamVR's `generic_hmd`.
-- Based on v20.14.1: it will **not** interoperate with v21 servers or clients.
-- The render model assets are proprietary PICO files. They are **not** covered by ALVR's MIT license;
-  see [`alvr/xtask/resources/pico_neo2/NOTICE-PICO.txt`](alvr/xtask/resources/pico_neo2/NOTICE-PICO.txt)
-  before redistributing this fork.
-
-### Direct download
-
-There are no prebuilt installers for this fork yet. Build it from source (see
-[Build from Source](#build-from-source)); any releases will be on the [Releases page](../../releases).
-
-## Compatibility
-
-|          VR Headset          |                                        Support                                         |
-| :--------------------------: | :------------------------------------------------------------------------------------: |
-|       Apple Vision Pro       |    :heavy_check_mark: ([store link](https://apps.apple.com/app/alvr/id6479728026))     |
-|      Quest 1/2/3/3S/Pro      | :heavy_check_mark: ([store link](https://www.meta.com/experiences/7674846229245715) *) |
-|     Pico Neo 3/4/4 Ultra     |                                   :heavy_check_mark:                                   |
-|    Play For Dream YVR 1/2/MR |                                   :heavy_check_mark:                                   |
-| Vive Focus 3/Vision/XR Elite |                                   :heavy_check_mark:                                   |
-|           Lynx R1            |                                   :heavy_check_mark:                                   |
-|     PhoneVR (smartphone)     |     :heavy_check_mark: ** ([repo](https://github.com/PhoneVR-Developers/PhoneVR))      |
-|        Android/Monado        |                                      :warning: **                                      |
-|          Oculus Go           |                 :x: ([old repo](https://github.com/polygraphene/ALVR))                 |
-
-\* : ALVR for Quest 1 not available through the Meta store.  
-\** : Only works on some smartphones, not enough testing.  
-
-> **PICO Neo 2:** stream to it with the legacy
-> [alvr-pico-legacy](https://github.com/Juspertinry/alvr-pico-legacy) client, and enable the
-> [Pico Neo 2 emulation mode](#about-this-fork) on this server.
-
-|     PC OS      |                                    Support                                    |
-| :------------: | :---------------------------------------------------------------------------: |
-| Windows 10/11  | :heavy_check_mark: ([store link](https://store.steampowered.com/app/3312710)) |
-| Windows XP/7/8 |                                      :x:                                      |
-|     Linux      |                             :heavy_check_mark:***                             |
-|     macOS      |                                      :x:                                      |
-
-\*** : Linux support is still in beta. To be able to make audio work or run ALVR at all you may need advanced knowledge of your distro for debugging or building from source.
-
-### Requirements
-
--   A supported standalone VR headset (see compatibility table above)
-
--   SteamVR
-
--   High-end gaming PC
-    -   See OS compatibility table above.
-    -   NVIDIA GPU that supports NVENC (1000 GTX Series or higher) (or with an AMD GPU that supports AMF VCE) with the latest driver.
-    -   Laptops with an onboard (Intel HD, AMD iGPU) and an additional dedicated GPU (NVidia GTX/RTX, AMD HD/R5/R7): you should assign the dedicated GPU or "high performance graphics adapter" to the applications ALVR, SteamVR for best performance and compatibility. (NVidia: Nvidia control panel->3d settings->application settings; AMD: similiar way)
-
--   802.11ac 5Ghz wireless or ethernet wired connection
-    -   It is recommended to use 802.11ac 5Ghz for the headset and ethernet for PC
-    -   You need to connect both the PC and the headset to same router (or use a routed connection as described [here](https://github.com/alvr-org/ALVR/wiki/ALVR-v14-and-Above))
+Remains to be seen, looking into edge cases, to see that the models behave properly at all times. afaik the models should also carry into games that accept /rendermodels via steamvr, but let me know if something appears otherwise.
 
 ## Install
 
-This fork does not ship an installer. Build and register it as described in
-[Build from Source](#build-from-source), then configure the emulation mode as described in
-[About this fork](#about-this-fork).
+Either check the releases tab, or build from source yourself - works same as the mainline alvr.
 
 ## Troubleshooting
 
@@ -244,7 +181,7 @@ ALVR apps do not directly collect any kind of data.
 
 ## Donate
 
-If you want to support this project you can make a donation to our [Open Source Collective account](https://opencollective.com/alvr).
+If you want to support the mainline project you can make a donation to [Open Source Collective account](https://opencollective.com/alvr).
 
 You can also donate to the original author of ALVR using Paypal (polygraphene@gmail.com) or with bitcoin (1FCbmFVSjsmpnAj6oLx2EhnzQzzhyxTLEv).
 
